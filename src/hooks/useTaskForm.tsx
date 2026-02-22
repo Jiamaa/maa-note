@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createTask, getNextId, getTaskById, updateTask } from '@/services/taskService'
 
 interface TaskData {
   id: string
@@ -11,11 +13,21 @@ interface TaskData {
   description: string
 }
 
-export function useTaskForm(taskId: string | null) {
-  const isEdit = !!taskId
+interface ValidationErrors {
+  title?: string
+  status?: string
+  dueDate?: string
+  priority?: string
+}
 
+export function useTaskForm(taskId: string | null) {
+  const router = useRouter()
+  const isEdit = taskId !== null
+
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<ValidationErrors>({})
   const [formData, setFormData] = useState<TaskData>({
-    id: taskId || '',
+    id: '',
     title: '',
     status: '',
     dueDate: '',
@@ -23,49 +35,91 @@ export function useTaskForm(taskId: string | null) {
     description: '',
   })
 
-  const [loading, setLoading] = useState(false)
-
-  // Simulasi fetch (nanti tinggal ganti fetch API)
   useEffect(() => {
-    if (isEdit) {
-      setLoading(true)
-
-      setTimeout(() => {
+    if (isEdit && taskId) {
+      const task = getTaskById(Number(taskId))
+      if (task) {
         setFormData({
-          id: '5',
-          title: 'Dummy Task',
-          status: 'Open',
-          dueDate: '2026-02-21',
-          priority: 'High',
-          description: 'Ini dummy data edit mode',
+          id: String(task.id),
+          title: task.title,
+          status: task.status,
+          dueDate: task.dueDate.toString(),
+          priority: task.priority,
+          description: task.description,
         })
-
-        setLoading(false)
-      }, 500)
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, id: String(getNextId()) }))
     }
-  }, [isEdit])
+    setLoading(false)
+  }, [taskId, isEdit])
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >
   ) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }))
+    if (errors[name as keyof ValidationErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined,
+      }))
+    }
+  }
+
+  const validate = (): boolean => {
+    const newErrors: ValidationErrors = {}
+    if (!formData.title.trim()) newErrors.title = 'Title is required'
+    if (!formData.status.trim()) newErrors.status = 'Status is required'
+    if (!formData.dueDate.trim()) newErrors.dueDate = 'Due date is required'
+    if (!formData.priority.trim()) newErrors.priority = 'Priority is required'
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = () => {
-    if (isEdit) {
-      console.log('UPDATE:', formData)
+    if (!validate()) return
+
+    const payload = {
+      title: formData.title.trim(),
+      status: formData.status.trim(),
+      dueDate: formData.dueDate.trim(),
+      priority: formData.priority.trim(),
+      description: formData.description.trim(),
+    }
+
+    if (isEdit && taskId) {
+      updateTask(Number(taskId), payload)
     } else {
-      console.log('CREATE:', formData)
+      createTask(payload)
+    }
+
+    router.push('/home')
+  }
+
+  const handleOptionChange = (field: 'status' | 'priority', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }))
+
+    if (errors[field as keyof ValidationErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: undefined,
+      }))
     }
   }
 
   return {
     formData,
+    errors,
     handleChange,
+    handleOptionChange,
     handleSubmit,
     loading,
     isEdit,

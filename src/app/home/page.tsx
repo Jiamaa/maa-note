@@ -1,90 +1,93 @@
 'use client';
 
-import Card from "@/components/card";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Card from "@/components/card";
 import DefaultNavbar from "@/components/navbar";
+import { getTasks } from "@/services/taskService";
+import { Task } from "@/types/note-types";
+import { deleteTask } from "@/services/taskService";
+import { list } from "@material-tailwind/react";
 
 export default function HomePage() {
-   const router = useRouter();
+  const router = useRouter();
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const fetchedTasks = getTasks();
+    setTasks(fetchedTasks);
+  }, []);
   
   const addNewTask = () => {
     router.push("/task");
   };
 
-  const tasks = {
-    todo: [
-      { id: 1, title: "Fix API Bug", dueDate: "2026-02-26", priority: "Medium" },
-      { id: 2, title: "Design UI", dueDate: "2026-02-25", priority: "High" },
-    ],
-    inProgress: [
-      { id: 3, title: "Build Auth", dueDate: "2026-02-28", priority: "High" },
-    ],
-    completed: [
-      { id: 4, title: "Setup Database", dueDate: "2026-02-20", priority: "Low" },
-    ],
+  const handleDelete = (id: number) => {
+     console.log('handleDelete called, id:', id);
+    deleteTask(id)
+    router.refresh()
+  }
+
+  // Filter tasks by status
+  const todoTasks = tasks.filter(task => task.status === 'todo');
+  const inProgressTasks = tasks.filter(task => task.status === 'inProgress');
+  const completedTasks = tasks.filter(task => task.status === 'completed');
+
+  // Sort tasks by priority and then by ID
+  const priorityRank: Record<string, number> = {
+    High: 1,
+    Medium: 2,
+    Low: 3,
   };
 
-  const sortTasks = (taskList: typeof tasks.todo) => {
-    const priorityRank: Record<string, number> = {
-      High: 1,
-      Medium: 2,
-      Low: 3,
-    };
-    return [...taskList].sort((a, b) => {
-      if (priorityRank[a.priority] !== priorityRank[b.priority]) {
-        return priorityRank[a.priority] - priorityRank[b.priority];
+  const sortTasks = (list: Task[]) => {
+    return [...list].sort((a, b) => {
+      const pa = priorityRank[a.priority.toLocaleLowerCase()] || 99;
+      const pb = priorityRank[b.priority.toLocaleLowerCase()] || 99;
+      if (pa !== pb) {
+        return pa - pb;
       }
       return a.id - b.id;
     });
   };
 
+  // Empty state per section
+  const EmptyState = ({ label }: { label: string }) => (
+    <div className="text-center text-[#757575] py-10">
+      <p>No {label} tasks</p>
+    </div>
+  );
+
+  const renderSection = (title: string, tasks: Task[]) => (
+    <div className="mb-8">
+      <h2 className="text-xl text-[#757575] font-semibold mb-4">{title}</h2>
+      {tasks.length === 0 ? (
+        <EmptyState label={title.toLowerCase()} />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortTasks(tasks).map((task) => (
+            <Card
+              key={task.id}
+              id={task.id}
+              title={task.title}
+              dueDate={task.dueDate}
+              priority={task.priority}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#FEFFF9] p-8">
       <DefaultNavbar />
         
-      {/* TO DO */}
-      <div className="pt-17 mb-8">
-        <h2 className="text-xl font-semibold mb-4">To Do</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortTasks(tasks.todo).map((task) => (
-            <Card
-              key={task.id}
-              title={task.title}
-              dueDate={task.dueDate}
-              priority={task.priority as any}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* IN PROGRESS */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">In Progress</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortTasks(tasks.inProgress).map((task) => (
-            <Card
-              key={task.id}
-              title={task.title}
-              dueDate={task.dueDate}
-              priority={task.priority as any}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* COMPLETED */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Completed</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortTasks(tasks.completed).map((task) => (
-            <Card
-              key={task.id}
-              title={task.title}
-              dueDate={task.dueDate}
-              priority={task.priority as any}
-            />
-          ))}
-        </div>
+       <div className="pt-17">
+        {renderSection("To Do", todoTasks)}
+        {renderSection("In Progress", inProgressTasks)}
+        {renderSection("Completed", completedTasks)}
       </div>
 
       {/* Floating Add Button */}

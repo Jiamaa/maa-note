@@ -1,14 +1,23 @@
 'use client';
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AppButton from "@/components/button";
 import DefaultNavbar from "@/components/navbar";
+import { verifyService } from "@/services/auth";
 
 export default function landingPage() {
   const router = useRouter();
 
-  const handleLogin = () => {
-    router.push("/login");
+  const handleLogin = async () => {
+    const result = await verifyService();
+
+    if (result.success) {
+      router.push("/home");
+      return;
+    }else {
+      router.push("/login");
+    }
   };
 
   return (

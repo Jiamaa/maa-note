@@ -1,10 +1,8 @@
-export interface Note {
+export interface Task {
     id: number;
     title: string;
     status: string;
-    dueDate: Date;
+    dueDate: string;
     priority: string;
     description: string;
-    onEdit: () => void;
-    onDelete: () => void;
 }
