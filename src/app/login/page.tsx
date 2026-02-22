@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { AppInput } from "@/components/input";
+import DefaultNavbar from "@/components/navbar";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
+      <DefaultNavbar />
       <div className="w-96 rounded-lg bg-white p-8 shadow-xl border-[#D9D9D9]">
         <h1 className="mb-6 text-center text-xl font-semibold text-gray-700">
           Login
@@ -27,7 +29,7 @@ export default function LoginPage() {
 
           <button
             style={{ backgroundColor: "#A1BC98" }}
-            className="mt-2 w-full rounded-md py-2 text-sm font-medium text-white"
+            className="mt-2 w-full rounded-md py-2 text-sm font-medium text-white cursor-pointer"
             onClick={handleLogin}
           >
             Sign In

@@ -2,6 +2,7 @@
 
 import Card from "@/components/card";
 import { useRouter } from "next/navigation";
+import DefaultNavbar from "@/components/navbar";
 
 export default function HomePage() {
    const router = useRouter();
@@ -39,9 +40,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FEFFF9] p-8">
-      <div className="fixed top-0 left-0 right-0 flex items-center justify-end bg-[#ECEFE2] h-17 pr-30">
-        <h2 className="text-lg font-medium">Hi, Rahma!</h2>
-      </div>
+      <DefaultNavbar />
         
       {/* TO DO */}
       <div className="pt-17 mb-8">

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import AppButton from "@/components/button";
+import DefaultNavbar from "@/components/navbar";
 
 export default function landingPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function landingPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center">
+      <DefaultNavbar />
       <section className="text-center space-y-8">
 
         <h1
@@ -29,7 +31,7 @@ export default function landingPage() {
         </p>
 
         <div className="pt-6">
-          <AppButton className="px-10 py-3 text-lg" onClick={handleLogin}>
+          <AppButton className="px-10 py-3 text-lg cursor-pointer" onClick={handleLogin}>
             Login
           </AppButton>
         </div>

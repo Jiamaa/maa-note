@@ -26,7 +26,11 @@ export default function TaskForm({ taskId }: Props) {
 
       <div className="space-y-4">
 
+        <label htmlFor="ID" className="block text-l font-bold mb-1">
+          ID
+        </label>
         <input
+          id="id"
           name="ID"
           value={formData.id}
           onChange={handleChange}
@@ -34,7 +38,11 @@ export default function TaskForm({ taskId }: Props) {
           className="w-full border p-2 rounded border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
         
+        <label htmlFor="title" className="block text-l font-bold mb-1">
+          Title
+        </label>
         <input
+          id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
@@ -42,7 +50,11 @@ export default function TaskForm({ taskId }: Props) {
           className="w-full border p-2 rounded border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
 
+        <label htmlFor="status" className="block text-l font-bold mb-1">
+          Status
+        </label>
         <input
+          id="status"
           name="status"
           value={formData.status}
           onChange={handleChange}
@@ -50,7 +62,11 @@ export default function TaskForm({ taskId }: Props) {
           className="w-full border p-2 rounded border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
 
+        <label htmlFor="dueDate" className="block text-l font-bold mb-1">
+          Due Date
+        </label>
         <input
+          id="dueDate"
           name="dueDate"
           type="date"
           value={formData.dueDate}
@@ -59,7 +75,11 @@ export default function TaskForm({ taskId }: Props) {
           className="w-full border p-2 rounded border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
 
+        <label htmlFor="priority" className="block text-l font-bold mb-1">
+          Priority
+        </label>
         <input
+          id="priority"
           name="priority"
           value={formData.priority}
           onChange={handleChange}
@@ -67,12 +87,16 @@ export default function TaskForm({ taskId }: Props) {
           className="w-full border p-2 rounded border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
 
+        <label htmlFor="description" className="block text-l font-bold mb-1">
+          Description
+        </label>
         <textarea
+          id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
           placeholder="Description"
-          className="w-full border p-2 rounded h-50 border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
+          className="w-full border p-2 rounded h-30 border-[#D9D9D9] focus:border-[#D9D9D9] focus:ring-0 focus:outline-none"
         />
 
         <div className="flex gap-4 justify-end">
