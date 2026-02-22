@@ -1,15 +1,17 @@
 'use client';
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/card";
 import DefaultNavbar from "@/components/navbar";
 import { getTasks } from "@/services/taskService";
 import { Task } from "@/types/note-types";
 import { deleteTask } from "@/services/taskService";
-import { list } from "@material-tailwind/react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function HomePage() {
+  useAuth()
+
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -22,10 +24,15 @@ export default function HomePage() {
     router.push("/task");
   };
 
+  const loadTask = () => {
+    setTasks(getTasks());
+  };
+
   const handleDelete = (id: number) => {
-     console.log('handleDelete called, id:', id);
-    deleteTask(id)
-    router.refresh()
+    console.log('handleDelete called, id:', id);
+    deleteTask(id);
+    loadTask();
+    router.refresh();
   }
 
   // Filter tasks by status
@@ -35,9 +42,9 @@ export default function HomePage() {
 
   // Sort tasks by priority and then by ID
   const priorityRank: Record<string, number> = {
-    High: 1,
-    Medium: 2,
-    Low: 3,
+    high: 1,
+    medium: 2,
+    low: 3,
   };
 
   const sortTasks = (list: Task[]) => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createTask, getNextId, getTaskById, updateTask } from '@/services/taskService'
+import { createTask, getNextId, getTaskById, updateTask, deleteTask } from '@/services/taskService'
 
 interface TaskData {
   id: string
@@ -101,6 +101,13 @@ export function useTaskForm(taskId: string | null) {
     router.push('/home')
   }
 
+  const handleDelete = () => {
+    if (isEdit && taskId){
+      deleteTask(Number(taskId))
+      router.push('/home')
+    }
+  }
+
   const handleOptionChange = (field: 'status' | 'priority', value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -121,6 +128,7 @@ export function useTaskForm(taskId: string | null) {
     handleChange,
     handleOptionChange,
     handleSubmit,
+    handleDelete,
     loading,
     isEdit,
   }

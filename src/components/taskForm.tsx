@@ -3,18 +3,22 @@
 import { useTaskForm } from "@/hooks/useTaskForm"
 import BadgePicker from "@/components/badgePicker"
 import { STATUS_OPTIONS, PRIORITY_OPTIONS } from "@/constants/taskOptions"
+import { useAuth } from "@/hooks/useAuth"
 
 interface Props {
   taskId: string | null
 }
 
 export default function TaskForm({ taskId }: Props) {
+  useAuth()
+  
   const {
     formData,
     errors,
     handleChange,
     handleOptionChange,
     handleSubmit,
+    handleDelete,
     loading,
     isEdit,
   } = useTaskForm(taskId)
@@ -113,6 +117,7 @@ export default function TaskForm({ taskId }: Props) {
           <button
             type="button"
             disabled={!isEdit}
+            onClick={handleDelete}
             className={`px-4 py-2 rounded-md text-sm transition text-white ${
               isEdit
                 ? 'bg-[#757575] hover:opacity-90 cursor-pointer'
